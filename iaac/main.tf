@@ -56,6 +56,7 @@ resource "azurerm_kubernetes_flux_configuration" "example" {
   name       = "example-fc"
   cluster_id = azurerm_kubernetes_cluster.example.id
   namespace  = "flux"
+  scope = "cluster"
 
   git_repository {
     url             = "https://github.com/Yearmix/flux-poc.git"

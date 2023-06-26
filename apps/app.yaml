@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
  name: test-ns
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-app
