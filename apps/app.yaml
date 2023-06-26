@@ -6,22 +6,21 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-app
+  name: test-deployment
   namespace: test-ns
 spec:
   replicas: 3
   selector:
-  matchLabels:
-    app: test-app
+    matchLabels:
+      app: test-app
   template:
     metadata:
-      name: test-app
       labels:
         app: test-app
     spec:
       containers:
-      - image: olpotestacr.azurecr.io/olpotestacr/application-test-image:latest
-        name: nodejs
+      - name: test-app
+        image: olpotestacr.azurecr.io/olpotestacr/application-test-image:latest        
 ---
 apiVersion: v1
 kind: Service
