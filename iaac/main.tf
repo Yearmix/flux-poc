@@ -8,6 +8,11 @@ data "azurerm_resource_group" "example" {
   name     = "k8s-test-app"  
 }
 
+data "azurerm_container_registry" "example" {
+  name     = "olpotestacr"
+  resource_group_name = data.azurerm_resource_group.example.name  
+}
+
 resource "azurerm_public_ip" "example" {
   name                = "acceptance-test-public-ip1"
   resource_group_name = data.azurerm_resource_group.example.name
@@ -43,6 +48,14 @@ resource "azurerm_kubernetes_cluster" "example" {
   }
 
   tags = data.azurerm_resource_group.example.tags
+}
+
+
+resource "azurerm_role_assignment" "example" {
+  principal_id                     = azurerm_kubernetes_cluster.example.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = data.azurerm_container_registry.example.id
+  skip_service_principal_aad_check = true
 }
 
 resource "azurerm_kubernetes_cluster_extension" "example" {
