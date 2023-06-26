@@ -10,6 +10,9 @@ metadata:
   namespace: test-ns
 spec:
   replicas: 3
+  selector:
+  matchLabels:
+    app: test-app
   template:
     metadata:
       name: test-app
