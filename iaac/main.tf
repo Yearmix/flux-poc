@@ -50,21 +50,21 @@ resource "azurerm_kubernetes_cluster" "example" {
   tags = data.azurerm_resource_group.example.tags
 }
 
-resource "azurerm_role_assignment" "example-ip1" {
+resource "azurerm_role_assignment" "ip-aks-identity" {
   principal_id                     = azurerm_kubernetes_cluster.example.identity[0].principal_id
   role_definition_name             = "Network Contributor"
   scope                            = azurerm_public_ip.example.id
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "example-ip" {
+resource "azurerm_role_assignment" "ip-aks-kubelet-identity" {
   principal_id                     = azurerm_kubernetes_cluster.example.kubelet_identity[0].object_id
   role_definition_name             = "Network Contributor"
   scope                            = azurerm_public_ip.example.id
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "example" {
+resource "azurerm_role_assignment" "acr-aks-kubelet-identity" {
   principal_id                     = azurerm_kubernetes_cluster.example.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
   scope                            = data.azurerm_container_registry.example.id
