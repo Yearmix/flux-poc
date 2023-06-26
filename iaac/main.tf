@@ -10,18 +10,19 @@ data "azurerm_resource_group" "example" {
 
 resource "azurerm_public_ip" "example" {
   name                = "acceptance-test-public-ip1"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
+  resource_group_name = data.azurerm_resource_group.example.name
+  location            = data.azurerm_resource_group.example.location
   allocation_method   = "Static"
-  tags = azurerm_resource_group.example.tags
+  tags = data.azurerm_resource_group.example.tags
+  sku = "Standard"
 }
 
 resource "azurerm_kubernetes_cluster" "example" {
   name                = "example-aks"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = data.azurerm_resource_group.example.location
+  resource_group_name = data.azurerm_resource_group.example.name
   dns_prefix          = "example-aks"
-  node_resource_group = "${azurerm_resource_group.example.name}-nodes"
+  node_resource_group = "${data.azurerm_resource_group.example.name}-nodes"
 
   default_node_pool {
     name       = "default"
@@ -33,11 +34,15 @@ resource "azurerm_kubernetes_cluster" "example" {
     type = "SystemAssigned"
   }
 
-  load_balancer_profile {
-    outbound_ip_address_ids = [ azurerm_public_ip.example.id ]
+  network_profile{
+    network_plugin = "azure"
+    load_balancer_sku = "standard"
+    load_balancer_profile {
+      outbound_ip_address_ids = [ azurerm_public_ip.example.id ]
+    }
   }
 
-  tags = azurerm_resource_group.example.tags
+  tags = data.azurerm_resource_group.example.tags
 }
 
 resource "azurerm_kubernetes_cluster_extension" "example" {
@@ -53,7 +58,7 @@ resource "azurerm_kubernetes_flux_configuration" "example" {
   namespace  = "flux"
 
   git_repository {
-    url             = "https://github.com/Yearmix/git-ops"
+    url             = "https://github.com/Yearmix/flux-poc.git"
     reference_type  = "branch"
     reference_value = "main"
     sync_interval_in_seconds = 60
